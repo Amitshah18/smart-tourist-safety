@@ -1,30 +1,105 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Alert } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Alert, Platform } from 'react-native'
 import React from 'react'
 import { Ionicons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons'
+import * as Location from "expo-location";
+import MapView, { Marker } from 'react-native-maps';
+import * as SMS from "expo-sms";
+
+import * as Linking from "expo-linking";
 
 const HomeScreen = () => {
-  const handleSOSPress = () => {
-    Alert.alert(
-      'SOS Alert',
-      'Emergency services will be contacted immediately!',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', style: 'destructive' }
-      ]
-    )
-  }
+  const handleSOSPress = async () => {
+    try {
+      // Request permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert("Permission Denied", "Location permission is required to send SOS.");
+        return;
+      }
+
+      // Get current location
+      let loc = await Location.getCurrentPositionAsync({});
+      let location = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+      setLocation(location); // store for map
+
+      // 3️⃣ Prepare message
+      const message = `SOS Alert! Location: https://maps.google.com/?q=${location.lat},${location.lng}`;
+
+      // 4️⃣ Send family SMS using device
+      const familyNumbers = ["6299486245"]; // replace with dynamic list if needed
+      if (Platform.OS === "android") {
+        // Android can auto-send
+        await SMS.sendSMSAsync(familyNumbers, message);
+      } else {
+        // iOS opens Messages app with prefilled message
+        await SMS.sendSMSAsync(familyNumbers, message);
+      }
+
+      // 5️⃣ Send to backend for saving SOS & Admin notification
+      let response = await fetch("http://192.168.1.5:5000/api/sos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: "64a12345abcd6789abcdef01", // replace with actual logged-in user ID
+          location,
+          message, // pass the message for SMS fallback to admin
+        }),
+      });
+
+      let data = await response.json();
+
+      if (data.success) {
+        Alert.alert("✅ SOS Sent", `Family and Admin notified. Zone: ${data.zoneStatus}`);
+      } else {
+        Alert.alert("❌ Failed", "Could not trigger SOS");
+      }
+
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while sending SOS.");
+      console.error(error);
+    }
+  };
+
+
 
   const handleQuickDial = (contact) => {
-    Alert.alert('Calling', `Calling ${contact}...`)
-  }
+    let number = contact === 'Family' ? '6299486245' : '100'; // family / police
+    Linking.openURL(`tel:${number}`);
+  };
 
-  const handleReportIncident = () => {
-    Alert.alert('Report Incident', 'Report incident feature will be implemented.')
-  }
+  const handleReportIncident = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/incidents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "Theft", location: "Central Market", description: "Wallet stolen" })
+      });
+      const data = await res.json();
+      Alert.alert("Incident Reported", `Type: ${data.type}`);
+    } catch (err) {
+      Alert.alert("Error", "Failed to report incident");
+    }
+  };
 
-  const handleAIAssistant = () => {
-    Alert.alert('AI Assistant', 'Starting chat with AI Assistant...')
-  }
+  const [location, setLocation] = React.useState(null);
+  const [zoneStatus, setZoneStatus] = React.useState(null);
+
+
+
+  const handleAIAssistant = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: "What are safety tips for tourists in Kolkata?" })
+      });
+      const data = await res.json();
+      Alert.alert("AI Assistant", data.reply);
+    } catch (err) {
+      Alert.alert("Error", "Failed to connect to AI Assistant");
+    }
+  };
+
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -58,20 +133,26 @@ const HomeScreen = () => {
           <Ionicons name="location" size={20} color="#4A90E2" />
           <Text style={styles.sectionTitle}>Live Location</Text>
         </View>
-        <View style={styles.mapContainer}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/350x150/E8E8E8/666666?text=Interactive+Map' }}
+        {location ? (
+          <MapView
             style={styles.mapImage}
-          />
-          <View style={styles.mapOverlay}>
-            <View style={styles.safeZoneIndicator}>
-              <Text style={styles.indicatorText}>Safe Zone</Text>
-            </View>
-            <View style={styles.riskZoneIndicator}>
-              <Text style={styles.indicatorText}>Risk Zone Detected</Text>
-            </View>
-          </View>
-        </View>
+            initialRegion={{
+              latitude: location.lat,
+              longitude: location.lng,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+            showsUserLocation={true}
+          >
+            <Marker
+              coordinate={{ latitude: location.lat, longitude: location.lng }}
+              title="You"
+              description={`Zone: ${zoneStatus || "Unknown"}`}
+            />
+          </MapView>
+        ) : (
+          <Text>Fetching location...</Text>
+        )}
       </View>
 
       {/* Quick Dial Contacts */}
