@@ -1,0 +1,2 @@
+# Ignore service account key file
+backend/config/service-account.json
