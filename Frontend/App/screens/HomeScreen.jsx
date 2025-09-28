@@ -63,7 +63,7 @@ const HomeScreen = () => {
 
 
   const handleQuickDial = (contact) => {
-    let number = contact === 'Family' ? '6299486245' : '100'; // family / police
+    let number = contact === 'Family' ? '9632587412' : '9874563214'; // family / police
     Linking.openURL(`tel:${number}`);
   };
 

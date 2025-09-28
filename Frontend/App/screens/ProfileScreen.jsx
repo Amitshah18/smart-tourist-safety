@@ -18,18 +18,18 @@ const ProfileScreen = ({ onLogout }) => {
   const [autoReporting, setAutoReporting] = useState(false);
 
   const user = {
-    name: 'John Traveler',
-    email: 'john.traveler@email.com',
-    phone: '+1 (555) 123-4567',
-    safetyScore: 85,
-    totalTrips: 12,
-    reportsSubmitted: 3
+    name: 'Ayush Singh',
+    email: 'ayush.singh@gmail.com',
+    phone: '+91 98765 43210',
+    safetyScore: 98,
+    totalTrips: 21,
+    reportsSubmitted: 4
   };
 
   const emergencyContacts = [
     { id: 1, name: 'Emergency Services', number: '911', type: 'emergency' },
-    { id: 2, name: 'Sarah Miller (Wife)', number: '+1 (555) 987-6543', type: 'personal' },
-    { id: 3, name: 'Mike Johnson (Friend)', number: '+1 (555) 456-7890', type: 'personal' }
+    { id: 2, name: 'Amit Kumar', number: '+91 9608440468', type: 'personal' },
+    { id: 3, name: 'Om Kumar', number: '+91 6299486245', type: 'personal' }
   ];
 
   const profileSections = [
@@ -154,7 +154,7 @@ const ProfileScreen = ({ onLogout }) => {
           <View style={styles.profileImageContainer}>
             <Image 
               source={{ 
-                uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+                uri: 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg'
               }} 
               style={styles.profileImage}
             />
