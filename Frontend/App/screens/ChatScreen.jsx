@@ -17,7 +17,7 @@ import * as Location from 'expo-location';
 import * as SMS from "expo-sms";
 
 // 👉 Gemini API
-const GEMINI_API_KEY = "AIzaSyDP4qygUtSzRgG34vodvb8p2Y10WZW4";
+const GEMINI_API_KEY = "your_gemini_api_key_here"; // Replace with your actual Gemini API key
 
 const ChatScreen = () => {
   const [message, setMessage] = useState('');
