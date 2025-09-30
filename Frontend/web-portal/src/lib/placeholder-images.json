@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "map",
+      "description": "An overhead view of a city map showing streets and buildings.",
+      "imageUrl": "https://picsum.photos/seed/map/600/400",
+      "imageHint": "map city"
+    },
+    {
+      "id": "incident-1",
+      "description": "A crowded city square with people walking around.",
+      "imageUrl": "https://picsum.photos/seed/1/600/400",
+      "imageHint": "theft crowd"
+    },
+    {
+      "id": "incident-2",
+      "description": "A city park with a water fountain.",
+      "imageUrl": "https://picsum.photos/seed/2/600/400",
+      "imageHint": "first aid"
+    },
+    {
+      "id": "incident-3",
+      "description": "The interior of a cozy restaurant.",
+      "imageUrl": "https://picsum.photos/seed/3/600/400",
+      "imageHint": "lost item"
+    }
+  ]
+}

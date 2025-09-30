@@ -28,7 +28,7 @@ const TopBar = ({ onProfilePress, onNotificationPress }) => {
         >
           <Image 
             source={{ 
-              uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80' 
+              uri: 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg' 
             }}
             style={styles.profileImage}
           />
